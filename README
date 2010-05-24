@@ -1,0 +1,8 @@
+This is a project to generate a graph of connections between subreddits
+by parsing their sidebar descriptions for links to other subreddits.
+The idea is to be able to generate an interesting image at the end, and
+start from an arbitrary list of subreddits.
+
+This project contains work by Andrew Cameron and Jairaj Sethi, and was
+inspired by a similar/identical project that Andrew's friend Harry wrote.
+Thanks for the inspiration, Harry!  We are but implementers.
