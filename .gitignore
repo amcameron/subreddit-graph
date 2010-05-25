@@ -1,0 +1,6 @@
+# ignore Vim swap files
+.*.swp
+# and compiled Python files
+*.pyc
+# and images
+*.png
