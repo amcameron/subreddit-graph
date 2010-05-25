@@ -8,9 +8,12 @@ def lineError(s,k=None):
 	if k: exit(k)
 
 class RedditParser(HTMLParser):
-	Record = False
-	Depth = 0
-	Links = []
+	
+	def __init__(self):
+		HTMLParser.__init__(self)
+		self.Record = False
+		self.Depth = 0
+		self.Links = []
 	
 	def handle_starttag(self,tag,attrs):
 		if tag=='div' and ('class','usertext-body') in attrs: self.Record = True
