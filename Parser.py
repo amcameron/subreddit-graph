@@ -42,39 +42,26 @@ class RedditParser(HTMLParser):
 def get_info(subreddit):
 	site = 'http://www.reddit.com/r/%s/' % subreddit.lower()
 	try: html = urlopen(site).read()
-	except Exception,e:
-		error("Unable to get subreddit '%s'" % subreddit)
+	except Exception as e:
+		error("Unable to get subreddit '%s'\n"+
+				"%s" % (subreddit,e))
 		return
 	parser = RedditParser()
 	parser.feed(html)
 	reddits = set()
 	for link,name in zip(parser.Links,parser.LinkNames):
-		found = False
-		if link[:24]=='http://www.reddit.com/r/':
-			reddit = link[24:]
-			found = True
-		elif link[:3]=='/r/':
-			reddit = link[3:]
-			found = True
-		elif name[:24]=='http://www.reddit.com/r/':
-			reddit = name[24:]
-			found = True
-		elif name[:17]=='www.reddit.com/r/':
-			reddit = name[17:]
-			found = True
-		elif name[:13]=='reddit.com/r/':
-			reddit = name[13:]
-			found = True
-		elif name[:3]=='/r/':
-			reddit = name[3:]
-			found = True
-		elif name[:2]=='r/':
-			reddit = name[2:]
-			found = True
-		if found:
-			if reddit[-1]=='/': reddit = reddit[:-1]
-			if reddit.find('/')!=-1: continue
-			reddits.add(reddit.lower())
+		if link.find(' ')!=-1: continue
+		if link[:24]=='http://www.reddit.com/r/': reddit = link[24:]
+		elif link[:3]=='/r/': reddit = link[3:]
+		elif name[:24]=='http://www.reddit.com/r/': reddit = name[24:]
+		elif name[:17]=='www.reddit.com/r/': reddit = name[17:]
+		elif name[:13]=='reddit.com/r/': reddit = name[13:]
+		elif name[:3]=='/r/': reddit = name[3:]
+		elif name[:2]=='r/': reddit = name[2:]
+		else: continue
+		if reddit[-1]=='/': reddit = reddit[:-1]
+		if reddit.find('/')!=-1: continue
+		reddits.add(reddit.lower())
 	return reddits,parser.Subscribers
 
 if __name__=="__main__":
