@@ -31,7 +31,6 @@ def grab_links(subreddit):
 	except Exception,e:
 		lineError('Unable to get subreddit "%s"' % subreddit)
 		lineError(e,1)
-	html = html[html.find('>')+1:]
 	parser = RedditParser()
 	parser.feed(html)
 	reddits = []
@@ -39,6 +38,7 @@ def grab_links(subreddit):
 		if link[:24]=='http://www.reddit.com/r/':
 			reddit = link[24:]
 			if reddit[-1]=='/': reddit = reddit[:-1]
+			if reddit.find('/')!=-1: continue
 			reddits.append(reddit.lower())
 	return reddits
 
