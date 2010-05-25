@@ -10,9 +10,11 @@ class RedditParser(HTMLParser):
 		HTMLParser.__init__(self)
 		self.Record = False
 		self.RecordSub = False
+		self.RecordLink = False
 		self.Depth = 0
 		self.Subscribers = 0
 		self.Links = []
+		self.LinkNames = []
 	
 	def handle_starttag(self,tag,attrs):
 		if tag=='div' and ('class','usertext-body') in attrs: self.Record = True
@@ -21,10 +23,15 @@ class RedditParser(HTMLParser):
 		if tag=='div': self.Depth += 1
 		elif tag=='a':
 			for (a,v) in attrs:
-				if a=='href': self.Links.append(v)
+				if a=='href':
+					self.RecordLink = True
+					self.Links.append(v)
 	
 	def handle_data(self,data):
 		if self.RecordSub: self.Subscribers = data
+		if self.RecordLink:
+			self.LinkNames.append(data)
+			self.RecordLink = False
 	
 	def handle_endtag(self,tag):
 		if self.Record and tag=='div':
@@ -41,13 +48,28 @@ def get_info(subreddit):
 	parser = RedditParser()
 	parser.feed(html)
 	reddits = set()
-	for link in parser.Links:
+	for link,name in zip(parser.Links,parser.LinkNames):
 		found = False
 		if link[:24]=='http://www.reddit.com/r/':
 			reddit = link[24:]
 			found = True
 		elif link[:3]=='/r/':
 			reddit = link[3:]
+			found = True
+		elif name[:24]=='http://www.reddit.com/r/':
+			reddit = name[24:]
+			found = True
+		elif name[:17]=='www.reddit.com/r/':
+			reddit = name[17:]
+			found = True
+		elif name[:13]=='reddit.com/r/':
+			reddit = name[13:]
+			found = True
+		elif name[:3]=='/r/':
+			reddit = name[3:]
+			found = True
+		elif name[:2]=='r/':
+			reddit = name[2:]
 			found = True
 		if found:
 			if reddit[-1]=='/': reddit = reddit[:-1]
