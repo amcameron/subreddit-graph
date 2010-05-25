@@ -39,7 +39,7 @@ def grab_links(subreddit):
 		if link[:24]=='http://www.reddit.com/r/':
 			reddit = link[24:]
 			if reddit[-1]=='/': reddit = reddit[:-1]
-			reddits.append(reddit)
+			reddits.append(reddit.lower())
 	return reddits
 
 if __name__=="__main__":
