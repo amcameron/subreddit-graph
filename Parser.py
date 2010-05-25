@@ -5,7 +5,6 @@ from urllib2 import urlopen
 from HTMLParser import HTMLParser
 
 class RedditParser(HTMLParser):
-	
 	def __init__(self):
 		HTMLParser.__init__(self)
 		self.Record = False
@@ -62,13 +61,12 @@ def get_info(subreddit):
 		elif name[:2]=='r/': reddit = name[2:]
 		else: continue
 		if reddit[-1]=='/': reddit = reddit[:-1]
-		if reddit.find('/')!=-1: continue
-		reddits.add(reddit.lower())
+		if reddit.find('/')==-1: reddits.add(reddit.lower())
 	return reddits,parser.Subscribers
 
 if __name__=="__main__":
 	if len(argv)<2:
-		error('No subreddit input found.\n' +
+		error('No subreddit input found.\n'+
 				'Usage: %s subreddit [subreddit2 [...]]' % argv[0])
 		exit(1)
 	for subreddit in argv[1:]:
