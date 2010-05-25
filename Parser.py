@@ -43,8 +43,7 @@ def get_info(subreddit):
 	site = 'http://www.reddit.com/r/%s/' % subreddit.lower()
 	try: html = urlopen(site).read()
 	except Exception as e:
-		error("Unable to get subreddit '%s'\n"+
-				"%s" % (subreddit,e))
+		error("Unable to get subreddit '%s'\n%s" % (subreddit,e))
 		return
 	parser = RedditParser()
 	parser.feed(html)
