@@ -50,6 +50,7 @@ def get_info(subreddit):
 	reddits = set()
 	for link,name in zip(parser.Links,parser.LinkNames):
 		link = link.strip()
+		name = name.strip()
 		if link.find(' ')!=-1: continue
 		elif link[:24]=='http://www.reddit.com/r/': reddit = link[24:]
 		elif link[:3]=='/r/': reddit = link[3:]
