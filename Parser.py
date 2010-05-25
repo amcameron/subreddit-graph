@@ -49,9 +49,11 @@ def get_info(subreddit):
 	parser.feed(html)
 	reddits = set()
 	for link,name in zip(parser.Links,parser.LinkNames):
+		link = link.strip()
 		if link.find(' ')!=-1: continue
-		if link[:24]=='http://www.reddit.com/r/': reddit = link[24:]
+		elif link[:24]=='http://www.reddit.com/r/': reddit = link[24:]
 		elif link[:3]=='/r/': reddit = link[3:]
+		elif name.find(' ')!=-1: continue
 		elif name[:24]=='http://www.reddit.com/r/': reddit = name[24:]
 		elif name[:17]=='www.reddit.com/r/': reddit = name[17:]
 		elif name[:13]=='reddit.com/r/': reddit = name[13:]
