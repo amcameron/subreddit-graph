@@ -28,7 +28,7 @@ class RedditParser(HTMLParser):
 					self.Links.append(v)
 	
 	def handle_data(self,data):
-		if self.RecordSub: self.Subscribers = data
+		if self.RecordSub: self.Subscribers = int(data.replace(',',''))
 		if self.RecordLink:
 			self.LinkNames.append(data)
 			self.RecordLink = False
