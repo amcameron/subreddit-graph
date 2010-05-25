@@ -1,11 +1,8 @@
 #!/usr/bin/env python
 from sys import exit,stderr,argv
+import logging
 from urllib2 import urlopen
 from HTMLParser import HTMLParser
-
-def lineError(s,k=None):
-	stderr.write(argv[0]+': '+s+'\n')
-	if k: exit(k)
 
 class RedditParser(HTMLParser):
 	
@@ -32,8 +29,8 @@ def grab_links(subreddit):
 	site = 'http://www.reddit.com/r/%s/' % subreddit.lower()
 	try: html = urlopen(site).read()
 	except Exception,e:
-		lineError('Unable to get subreddit "%s"' % subreddit)
-		lineError(e,1)
+		logging.error("Unable to get subreddit '%s'" % subreddit)
+		return set()
 	parser = RedditParser()
 	parser.feed(html)
 	reddits = set()
@@ -53,8 +50,10 @@ def grab_links(subreddit):
 
 if __name__=="__main__":
 	if len(argv)<2:
-		lineError('No subreddit input found')
-		lineError('Usage: %s subreddit [subreddit2 [...]]',1)
+		logging.error('No subreddit input found.\n' +
+				'Usage: %s subreddit [subreddit2 [...]]')
+		import sys
+		sys.exit(1)
 	for subreddit in argv[1:]:
 		print 'SUBREDDIT: %s' % subreddit
 		for link in grab_links(subreddit):

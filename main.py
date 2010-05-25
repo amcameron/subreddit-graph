@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 from sys import argv,stderr,exit
+import logging
 
 from yapgvb import Digraph, engines
 
@@ -7,6 +8,9 @@ from Parser import grab_links
 
 #TODO: change this from a constant to a commandline argument
 MAX_DEPTH = 10
+
+# Configure logging.
+logging.basicConfig(level=logging.WARN)
 
 # Print errors to console (kill if needed)
 def lineError(s,k=None):
@@ -21,6 +25,7 @@ graph = Digraph('Subreddit connection graph starting with:\n' +
 		', '.join(argv[1:]))
 
 next_subs = set(subreddit.lower() for subreddit in argv[1:])
+logging.debug("Received on commandline: " + ' '.join(next_subs))
 visited = set()
 
 for current_depth in xrange(MAX_DEPTH):
@@ -31,8 +36,10 @@ for current_depth in xrange(MAX_DEPTH):
 		break
 
 	for subreddit in current_subs:
+		logging.debug("Visiting: " + subreddit)
 		current_node = graph.add_node(subreddit)
 		links = grab_links(subreddit)
+		logging.debug("Received links: " + ' '.join(links))
 
 		for link in links:
 			if link not in visited:
