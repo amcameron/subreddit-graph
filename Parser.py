@@ -33,13 +33,13 @@ def grab_links(subreddit):
 		lineError(e,1)
 	parser = RedditParser()
 	parser.feed(html)
-	reddits = []
+	reddits = set()
 	for link in parser.Links:
 		if link[:24]=='http://www.reddit.com/r/':
 			reddit = link[24:]
 			if reddit[-1]=='/': reddit = reddit[:-1]
 			if reddit.find('/')!=-1: continue
-			reddits.append(reddit.lower())
+			reddits.add(reddit.lower())
 	return reddits
 
 if __name__=="__main__":
