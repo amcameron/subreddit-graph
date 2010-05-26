@@ -4,7 +4,7 @@ from logging import error
 from HTMLParser import HTMLParser
 from httplib import HTTPConnection
 
-class RedditParser(HTMLParser):
+class RedditHTMLParser(HTMLParser):
 	def __init__(self):
 		HTMLParser.__init__(self)
 		self.reset2()
@@ -45,10 +45,10 @@ class RedditParser(HTMLParser):
 			self.Record = self.Depth!=0
 		else: self.RecordSub = False
 
-class RedditGetter:
+class RedditParser:
 	def __init__(self):
 		self.c = HTTPConnection('www.reddit.com')
-		self.r = RedditParser()
+		self.r = RedditHTMLParser()
 	
 	def get_info(self,subreddit):
 		try:
@@ -97,7 +97,7 @@ if __name__=="__main__":
 		error('No subreddit input found.\n'+
 				'Usage: %s subreddit [subreddit2 [...]]' % argv[0])
 		exit(1)
-	r = RedditGetter()
+	r = RedditParser()
 	rec = argv[1]=='-r'
 	if rec: args = argv[2:]
 	else: args = argv[1:]
