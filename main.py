@@ -34,9 +34,9 @@ visited = set()
 for current_depth in xrange(MAX_DEPTH):
 	current_subs = next_subs
 	visited.update(next_subs)
-	next_subs = set()
 	if len(current_subs) == 0:
 		break
+	next_subs = set()
 
 	for subreddit in current_subs:
 		logging.debug("Visiting: " + subreddit)
@@ -44,7 +44,8 @@ for current_depth in xrange(MAX_DEPTH):
 		if info: links, num_subs = info
 		else: continue
 		current_node = graph.add_node(subreddit, shape="circle",
-				width=sqrt(log(num_subs, WIDTH_NORMALIZER)), fixedsize=True)
+				width=sqrt(log(num_subs, WIDTH_NORMALIZER)), fixedsize=True,
+				label='\n'.join([subreddit, str(num_subs)]))
 		logging.debug("Received links: " + ' '.join(links))
 
 		for link in links:
@@ -52,6 +53,19 @@ for current_depth in xrange(MAX_DEPTH):
 				next_subs.add(link)
 			new_node = graph.add_node(link)
 			current_node >> new_node
+
+logging.debug("Done main loop.  Remaining unvisited subs:\n" +
+		'\n'.join(next_subs))
+# Style the subreddits we didn't visit due to maximum search depth being
+# reached.
+for link in next_subs:
+	info = parser.get_info(link)
+	if info: links, num_subs = info
+	else: continue
+	logging.debug("Updating properties for remaining subreddit: %s" % link)
+	graph.add_node(link, shape="circle",
+			width=sqrt(log(num_subs, WIDTH_NORMALIZER)),
+			fixedsize=True, label='\n'.join([link, str(num_subs)]))
 
 graph.layout(engines.dot)
 graph.render('output.png')
