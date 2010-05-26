@@ -81,16 +81,32 @@ class RedditGetter:
 		self.r.close()
 		self.c.close()
 
+def visit(subreddit,visited,tab):
+	if subreddit in visited: return visited
+	tabs = ''.join(['\t' for i in xrange(tab)])
+	print tabs+subreddit
+	visited.add(subreddit)
+	i = r.get_info(subreddit)
+	if not i or len(i)<1: return visited
+	ls,s = i
+	for l in ls: visited = visit(l,visited,tab+1)
+	return visited
+
 if __name__=="__main__":
-	if len(argv)<2:
+	if len(argv)<2 or (argv[1]=='-r' and len(argv)<3):
 		error('No subreddit input found.\n'+
 				'Usage: %s subreddit [subreddit2 [...]]' % argv[0])
 		exit(1)
 	r = RedditGetter()
-	for subreddit in argv[1:]:
-		print 'SUBREDDIT: %s' % subreddit
-		links,subscribers = r.get_info(subreddit)
-		print '\tSUBSCRIBERS: %s' % subscribers
-		if links:
-			for link in links: print '\t%s' % link
-		print 
+	rec = argv[1]=='-r'
+	if rec: args = argv[2:]
+	else: args = argv[1:]
+	for subreddit in args:
+		if rec: visit(subreddit,set(),0)
+		else:
+			print 'SUBREDDIT: %s' % subreddit
+			links,subscribers = r.get_info(subreddit)
+			print '\tSUBSCRIBERS: %s' % subscribers
+			if links:
+				for link in links: print '\t%s' % link
+			print 
