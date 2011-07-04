@@ -33,10 +33,10 @@ class RedditHTMLParser(HTMLParser):
 		if tag == 'div':
 			self.Depth += 1
 		elif tag == 'a':
-			for (a, v) in attrs:
-				if a == 'href':
+			for (attr, val) in attrs:
+				if attr == 'href':
 					self.RecordLink = True
-					self.Links.append(v)
+					self.Links.append(val)
 
 	def handle_data(self, data):
 		if self.RecordSub:
@@ -54,20 +54,20 @@ class RedditHTMLParser(HTMLParser):
 
 class RedditParser:
 	def __init__(self):
-		self.c = HTTPConnection('www.reddit.com')
-		self.r = RedditHTMLParser()
+		self.connection = HTTPConnection('www.reddit.com')
+		self.parser = RedditHTMLParser()
 
 	def get_info(self, subreddit):
 		try:
-			self.c.request('GET', '/r/%s/' % subreddit.lower())
-			html = self.c.getresponse().read()
+			self.connection.request('GET', '/r/%s/' % subreddit.lower())
+			html = self.connection.getresponse().read()
 		except Exception as e:
 			_log.error("Unable to get subreddit '%s'\n%s" % (subreddit, e))
 			return
-		self.r.reset()
-		self.r.feed(html)
+		self.parser.reset()
+		self.parser.feed(html)
 		reddits = set()
-		for link, name in zip(self.r.Links, self.r.LinkNames):
+		for link, name in zip(self.parser.Links, self.parser.LinkNames):
 			link = link.strip()
 			name = name.strip()
 			if link.find(' ') != -1:
@@ -94,11 +94,11 @@ class RedditParser:
 				reddit = reddit[:-1]
 			if reddit.find('/') == -1:
 				reddits.add(reddit.lower())
-		return reddits, self.r.Subscribers
+		return reddits, self.parser.Subscribers
 
 	def __del__(self):
-		self.r.close()
-		self.c.close()
+		self.parser.close()
+		self.connection.close()
 
 def visit(subreddit, visited, tab):
 	if subreddit in visited:
@@ -106,11 +106,11 @@ def visit(subreddit, visited, tab):
 	tabs = ''.join(['\t' for i in xrange(tab)])
 	_log.debug(tabs + subreddit)
 	visited.add(subreddit)
-	i = r.get_info(subreddit)
-	if not i or len(i) < 1:
+	info = parser.get_info(subreddit)
+	if not info or len(info) < 1:
 		return visited
-	ls, s = i
-	for l in ls:
+	links, subs = info
+	for l in links:
 		visited = visit(l, visited, tab+1)
 	return visited
 
@@ -121,7 +121,7 @@ if __name__ == "__main__":
 		_log.error('No subreddit input found.\n'
 				'Usage: %s subreddit [subreddit2 [...]]' % argv[0])
 		exit(1)
-	r = RedditParser()
+	parser = RedditParser()
 	rec = argv[1] == '-r'
 	if rec:
 		args = argv[2:]
@@ -132,7 +132,7 @@ if __name__ == "__main__":
 			visit(subreddit, set(), 0)
 		else:
 			_log.debug('SUBREDDIT: %s' % subreddit)
-			links, subscribers = r.get_info(subreddit)
+			links, subscribers = parser.get_info(subreddit)
 			_log.debug('\tSUBSCRIBERS: %s' % subscribers)
 			if links:
 				for link in links:
