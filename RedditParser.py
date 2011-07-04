@@ -104,7 +104,7 @@ def visit(subreddit, visited, tab):
 	if subreddit in visited:
 		return visited
 	tabs = ''.join(['\t' for i in xrange(tab)])
-	print tabs + subreddit
+	_log.debug(tabs + subreddit)
 	visited.add(subreddit)
 	i = r.get_info(subreddit)
 	if not i or len(i) < 1:
@@ -131,9 +131,10 @@ if __name__ == "__main__":
 		if rec:
 			visit(subreddit, set(), 0)
 		else:
-			print 'SUBREDDIT: %s' % subreddit
+			_log.debug('SUBREDDIT: %s' % subreddit)
 			links, subscribers = r.get_info(subreddit)
-			print '\tSUBSCRIBERS: %s' % subscribers
+			_log.debug('\tSUBSCRIBERS: %s' % subscribers)
 			if links:
-				for link in links: print '\t%s' % link
-			print 
+				for link in links:
+					_log.debug('\t%s' % link)
+			_log.debug("")
