@@ -72,21 +72,21 @@ class RedditParser:
 			name = name.strip()
 			if link.find(' ') != -1:
 				continue
-			elif link[:24] == 'http://www.reddit.com/r/':
+			elif link.startswith('http://www.reddit.com/r/'):
 				reddit = link[24:]
-			elif link[:3] == '/r/':
+			elif link.startswith('/r/'):
 				reddit = link[3:]
 			elif name.find(' ') != -1:
 				continue
-			elif name[:24] == 'http://www.reddit.com/r/':
+			elif name.startswith('http://www.reddit.com/r/'):
 				reddit = name[24:]
-			elif name[:17] == 'www.reddit.com/r/':
+			elif name.startswith('www.reddit.com/r/'):
 				reddit = name[17:]
-			elif name[:13] == 'reddit.com/r/':
+			elif name.startswith('reddit.com/r/'):
 				reddit = name[13:]
-			elif name[:3] == '/r/':
+			elif name.startswith('/r/'):
 				reddit = name[3:]
-			elif name[:2] == 'r/':
+			elif name.startswith('r/'):
 				reddit = name[2:]
 			else:
 				continue
