@@ -1,0 +1,63 @@
+<!DOCTYPE HTML>
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+
+    <title>Subreddit Graph</title>
+
+    <script src="{{ url_for('static', filename='raphael-min.js') }}"
+        type="text/javascript" charset="utf-8"></script>
+    <script type="text/javascript" src="{{
+        url_for('static', filename='jquery-1.6.2.js') }}">
+    </script>
+    <script type="text/javascript" charset="utf-8">
+        var $SCRIPT_ROOT = {{ request.script_root|tojson|safe }};
+
+        window.onload = function() {
+            var paper = Raphael("holder", 320, 200);
+
+            var circle = paper.circle(100, 100, 10),
+                txt = paper.text(100, 100, "{{ subreddits[0] }}"),
+                ms = 500;
+            circle.attr('fill', '#399');
+            circle.attr('stroke', '#c66');
+
+            circle.animate({r: 30}, 2000, "elastic");
+
+            circle.click(function (event) {
+                $.getJSON(
+                    $SCRIPT_ROOT + '/_get_subs', {
+                        parent: "{{ subreddits[0] }}"
+                    }, function(data) {
+                        var newcirc = paper.circle(200, 100, 20),
+                            newtxt = paper.text(200, 100, data.subreddit);
+
+                        newcirc.animate({r: data.size}, ms, ">");
+                });
+            });
+        };
+
+        <!-- TODO: Force-directed graph. -->
+    </script>
+
+    <style type="text/css" media="screen">
+        #header {
+            font: helvetica, arial, sans;
+            size: 3em;
+            text-align: center;
+            text-color: #333;
+        }
+    </style>
+</head>
+<body>
+    <div id="header">
+        Reddit Grapher
+    </div>
+    <div id="content">
+        <ul>
+            {% for sub in subreddits %}
+            <li>{{ sub }}</li>
+            {% endfor %}
+        </ul>
+    </div>
+    <div id="holder"></div>
+</body>
