@@ -8,12 +8,15 @@ from yapgvb import Digraph, engines
 from RedditParser import RedditParser
 
 #TODO: change this from a constant to a commandline argument
-MAX_DEPTH = 10
+MAX_DEPTH = 3
 WIDTH_NORMALIZER = 3
 
 
 def width(num_subs):
-	a = log(num_subs, WIDTH_NORMALIZER)
+	try:
+		a = log(num_subs, WIDTH_NORMALIZER)
+	except ValueError:
+		a = 0
 	if a < 3:
 		a = 3
 	return sqrt(a)

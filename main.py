@@ -1,11 +1,11 @@
 #!/usr/bin/env python
 from sys import argv, exit
-from logging import error, basicConfig, WARN
+from logging import error, basicConfig, WARN, DEBUG
 
 from RedditGrapher import make_graph
 
 if __name__ == '__main__':
-	basicConfig(level=WARN)
+	basicConfig(level=DEBUG)
 	if len(argv) < 2:
 		error('No subreddit input found')
 		error('Usage: ' + argv[0] + ' subreddit [subreddit2 [...]]')
