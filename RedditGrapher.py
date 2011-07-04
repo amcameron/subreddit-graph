@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-from sys import argv,stderr,exit
+from sys import argv, stderr, exit
 from math import log, sqrt
 import logging
 
@@ -11,12 +11,15 @@ from RedditParser import RedditParser
 MAX_DEPTH = 10
 WIDTH_NORMALIZER = 3
 
+
 def width(num_subs):
-	a = log(num_subs,WIDTH_NORMALIZER)
-	if a < 3: a = 3
+	a = log(num_subs, WIDTH_NORMALIZER)
+	if a < 3:
+		a = 3
 	return sqrt(a)
 
-def make_graph(args,outfile):
+
+def make_graph(args, outfile):
 	graph = Digraph('Subreddit connection graph starting with:\n' +
 			', '.join(args))
 
@@ -35,8 +38,10 @@ def make_graph(args,outfile):
 		for subreddit in current_subs:
 			logging.debug("Visiting: " + subreddit)
 			info = parser.get_info(subreddit)
-			if info: links, num_subs = info
-			else: continue
+			if info:
+				links, num_subs = info
+			else:
+				continue
 			current_node = graph.add_node(subreddit, shape="circle",
 					width=width(num_subs), fixedsize=True,
 					label='\n'.join([subreddit, str(num_subs)]))
@@ -54,8 +59,10 @@ def make_graph(args,outfile):
 	# reached.
 	for link in next_subs:
 		info = parser.get_info(link)
-		if info: links, num_subs = info
-		else: continue
+		if info:
+			links, num_subs = info
+		else:
+			continue
 		logging.debug("Updating properties for remaining subreddit: %s" % link)
 		graph.add_node(link, shape="circle",
 				width=width(num_subs), fixedsize=True,
@@ -64,10 +71,11 @@ def make_graph(args,outfile):
 	graph.layout(engines.dot)
 	graph.render(outfile)
 
+
 if __name__=="__main__":
 	logging.basicConfig(level=logging.WARN)
-	if len(argv)<2:
+	if len(argv) < 2:
 		logging.error('No subreddit input found')
-		logging.error('Usage: '+argv[0]+' subreddit [subreddit2 [...]]')
+		logging.error('Usage: ' + argv[0] + ' subreddit [subreddit2 [...]]')
 		exit(1)
-	make_graph(argv[1:],'output.png')
+	make_graph(argv[1:], 'output.png')
