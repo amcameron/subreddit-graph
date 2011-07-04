@@ -59,6 +59,7 @@ class RedditParser:
 
 	def get_info(self, subreddit):
 		try:
+			_log.debug('GET ' + '/r/%s/' % subreddit.lower())
 			self.connection.request('GET', '/r/%s/' % subreddit.lower())
 			html = self.connection.getresponse().read()
 		except Exception as e:
@@ -93,6 +94,7 @@ class RedditParser:
 			if reddit[-1] == '/':
 				reddit = reddit[:-1]
 			if reddit.find('/') == -1:
+				_log.debug('Found subreddit: %s' % reddit.lower())
 				reddits.add(reddit.lower())
 		return reddits, self.parser.Subscribers
 
