@@ -1,0 +1,3 @@
+[submodule "dracula.git"]
+	path = dracula.git
+	url = git://github.com/strathausen/dracula.git.git
