@@ -7,34 +7,40 @@
     <script src="{{ url_for('static', filename='raphael-min.js') }}"
         type="text/javascript" charset="utf-8"></script>
     <script type="text/javascript" src="{{
-        url_for('static', filename='jquery-1.6.2.js') }}">
-    </script>
+        url_for('static', filename='jquery-1.6.2.js') }}"></script>
+    <script type="text/javascript" src="{{
+        url_for('static', filename='dracula_graph.js') }}"></script>
     <script type="text/javascript" charset="utf-8">
         var $SCRIPT_ROOT = {{ request.script_root|tojson|safe }};
 
-        window.onload = function() {
-            var paper = Raphael("holder", 320, 200);
+        $(function() {
+            var g = new Graph();
+            g.addNode("{{ subreddits[0] }}");
 
-            var circle = paper.circle(100, 100, 10),
-                txt = paper.text(100, 100, "{{ subreddits[0] }}"),
-                ms = 500;
-            circle.attr('fill', '#399');
-            circle.attr('stroke', '#c66');
+            var l = new Graph.Layout.Spring(g);
+            l.layout();
 
-            circle.animate({r: 30}, 2000, "elastic");
+            var r = new Graph.Renderer.Raphael('holder', g, 500, 500);
+            r.draw();
 
-            circle.click(function (event) {
+            $("#{{ subreddits[0] }}").click(function (event) {
+                var subs = [];
+
                 $.getJSON(
                     $SCRIPT_ROOT + '/_get_subs', {
                         parent: "{{ subreddits[0] }}"
-                    }, function(data) {
-                        var newcirc = paper.circle(200, 100, 20),
-                            newtxt = paper.text(200, 100, data.subreddit);
+                    }, function(json) {
+                        subs = json.subreddits;
+                        $.each(subs, function(i, sub) {
+                            g.addNode(sub);
+                            g.addEdge("{{ subreddits[0] }}", sub);
+                        });
 
-                        newcirc.animate({r: data.size}, ms, ">");
+                        l.layout();
+                        r.draw();
                 });
             });
-        };
+        });
 
         <!-- TODO: Force-directed graph. -->
     </script>

@@ -27,7 +27,7 @@ def get_subs():
 	_log.info("Requesting information for /r/" + parent)
 	subreddits, subscribers = parser.get_info(parent)
 	size = log(subscribers)
-	return jsonify(subreddit=subreddits.pop(), size=size)
+	return jsonify(subreddits=list(subreddits), size=size)
 
 if __name__ == '__main__':
 	logging.basicConfig(level=logging.DEBUG)
