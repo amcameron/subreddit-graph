@@ -22,26 +22,35 @@
             var l = new Graph.Layout.Spring(g);
             l.layout();
 
-            var r = new Graph.Renderer.Raphael('holder', g, 500, 500);
+            var r = new Graph.Renderer.Raphael('holder', g, 1000, 1000);
             r.draw();
 
-            $("#{{ subreddits[0] }}").click(function (event) {
-                var subs = [];
+            var getAndDrawSubs = function(source) {
+                return function (event) {
+                    var subs = [];
 
-                $.getJSON(
-                    $SCRIPT_ROOT + '/_get_subs', {
-                        parent: "{{ subreddits[0] }}"
-                    }, function(json) {
-                        subs = json.subreddits;
-                        $.each(subs, function(i, sub) {
-                            g.addNode(sub);
-                            g.addEdge("{{ subreddits[0] }}", sub);
-                        });
+                    $.getJSON(
+                        $SCRIPT_ROOT + '/_get_subs',
+                        {parent: source},
+                        function(json) {
+                            subs = json.subreddits;
+                            $.each(subs, function(i, sub) {
+                                g.addNode(sub);
+                                g.addEdge(source, sub, { directed : true });
+                            });
 
-                        l.layout();
-                        r.draw();
-                });
-            });
+                            l.layout();
+                            r.draw();
+
+                            $.each(subs, function(i, sub) {
+                                $("#" + sub).click(getAndDrawSubs(sub));
+                            });
+                        }
+                    );
+                };
+            };
+
+            $("#{{subreddits[0]}}").click(getAndDrawSubs("{{subreddits[0]}}"));
         });
 
         <!-- TODO: Force-directed graph. -->
