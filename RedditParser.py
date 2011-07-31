@@ -36,7 +36,7 @@ class RedditHTMLParser(HTMLParser):
 			for (attr, val) in attrs:
 				if attr == 'href':
 					self.RecordLink = True
-					self.Links.append(val)
+					self.Links.extend(val.split("+"))
 
 	def handle_data(self, data):
 		if self.RecordSub:
